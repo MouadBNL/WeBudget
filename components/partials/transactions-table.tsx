@@ -193,7 +193,17 @@ export function TransactionTable() {
             <TableCell>{invoice.date}</TableCell>
             <TableCell>{invoice.transaction}</TableCell>
             <TableCell>{invoice.category}</TableCell>
-            <TableCell className="text-right">{invoice.amount} DH</TableCell>
+            <TableCell className="text-right">
+              {invoice.amount < 0 ? (
+                <span className="text-red-700 font-bold">
+                  {invoice.amount} DH
+                </span>
+              ) : (
+                <span className="text-green-600 font-bold">
+                  {invoice.amount} DH
+                </span>
+              )}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

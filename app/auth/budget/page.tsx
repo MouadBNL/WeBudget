@@ -1,5 +1,8 @@
+import Budget from "@/components/budget/Budget";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { BudgetGroup } from "@/types";
 import {
   LineChart,
   Line,
@@ -104,6 +107,12 @@ export default function BudgetDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <hr className="my-8" />
+      <div className="flex justify-end items-end mb-4">
+        <Button>Add Budget Group</Button>
+      </div>
+      <Budget />
 
       {/* Budget Categories */}
       <Card>

@@ -6,3 +6,17 @@ export type Transaction = {
   category: string;
   amount: number;
 };
+
+export type Budget = {
+  id: number | null;
+  category: string;
+  budget: number;
+  actual: number;
+  remaining: number;
+};
+
+export type BudgetGroup = {
+  id: number | null;
+  name: string;
+  items: Budget[];
+};

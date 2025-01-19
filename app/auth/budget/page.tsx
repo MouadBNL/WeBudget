@@ -1,22 +1,29 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-const BudgetDashboard = () => {
+export default function BudgetDashboard() {
   // Sample data - In real app, this would come from your API
   const monthlyData = [
-    { month: 'Jan', spent: 4000, budget: 5000 },
-    { month: 'Feb', spent: 4500, budget: 5000 },
-    { month: 'Mar', spent: 3800, budget: 5000 },
-    { month: 'Apr', spent: 4200, budget: 5000 },
+    { month: "Jan", spent: 4000, budget: 5000 },
+    { month: "Feb", spent: 4500, budget: 5000 },
+    { month: "Mar", spent: 3800, budget: 5000 },
+    { month: "Apr", spent: 4200, budget: 5000 },
   ];
 
   const categories = [
-    { name: 'Operations', spent: 2500, budget: 3000, color: 'bg-blue-600' },
-    { name: 'Marketing', spent: 1500, budget: 2000, color: 'bg-green-600' },
-    { name: 'Inventory', spent: 3000, budget: 4000, color: 'bg-purple-600' },
-    { name: 'Utilities', spent: 800, budget: 1000, color: 'bg-orange-600' },
+    { name: "Operations", spent: 2500, budget: 3000, color: "bg-blue-600" },
+    { name: "Marketing", spent: 1500, budget: 2000, color: "bg-green-600" },
+    { name: "Inventory", spent: 3000, budget: 4000, color: "bg-purple-600" },
+    { name: "Utilities", spent: 800, budget: 1000, color: "bg-orange-600" },
   ];
 
   return (
@@ -49,7 +56,9 @@ const BudgetDashboard = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Spent This Month</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Spent This Month
+            </CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -107,10 +116,12 @@ const BudgetDashboard = () => {
               <div key={category.name} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>{category.name}</span>
-                  <span>{Math.round((category.spent / category.budget) * 100)}%</span>
+                  <span>
+                    {Math.round((category.spent / category.budget) * 100)}%
+                  </span>
                 </div>
-                <Progress 
-                  value={(category.spent / category.budget) * 100} 
+                <Progress
+                  value={(category.spent / category.budget) * 100}
                   className={category.color}
                 />
                 <div className="flex justify-between text-sm text-muted-foreground">
@@ -128,7 +139,7 @@ const BudgetDashboard = () => {
         <CardHeader>
           <CardTitle>Spending Trends</CardTitle>
         </CardHeader>
-        <CardContent>
+        {/* <CardContent>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyData}>
@@ -141,10 +152,8 @@ const BudgetDashboard = () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </CardContent>
+        </CardContent> */}
       </Card>
     </div>
   );
-};
-
-export default BudgetDashboard;
+}

@@ -53,6 +53,26 @@ export async function getBudgetGroups() {
   }
 }
 
+export async function getCategories() {
+  const supabase = await createClient();
+
+  try {
+    const { data: categories } = await supabase.from("budget_category").select(`
+        id,
+        category
+        `);
+    return {
+      success: true,
+      data: categories?.map((e) => ({
+        label: e.category,
+        value: e.id,
+      })),
+    };
+  } catch (err) {
+    return { success: false, data: null };
+  }
+}
+
 export async function getBudgetData() {
   const supabase = await createClient();
 

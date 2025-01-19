@@ -5,6 +5,7 @@ export type Transaction = {
   transaction: string;
   category: string;
   amount: number;
+  category_id: number;
 };
 
 export type Budget = {

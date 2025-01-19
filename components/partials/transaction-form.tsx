@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Transaction } from "@/types";
+import { getCategories } from "@/app/actions/budget";
 
 export type TransactionFormProps = {
   transaction: Partial<Transaction>;
@@ -45,6 +46,24 @@ const TransactionForm = ({
       onChange(t);
     }
   });
+
+  const [categories, setCategories] = useState<
+    { label: string; value: number }[]
+  >([]);
+
+  useEffect(() => {
+    refreshCategories();
+  }, []);
+
+  const refreshCategories = async () => {
+    try {
+      const res = await getCategories();
+      if (res.success == false || res.data == null) throw new Error();
+      setCategories(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const onSubmitClick = (data: Transaction) => {
     console.log("Transaction Submitted:", data);
@@ -121,18 +140,23 @@ const TransactionForm = ({
       <div>
         <Label htmlFor="category">Category</Label>
         <Select
-          onValueChange={(value) => setValue("category", value)}
+          onValueChange={(value) => setValue("category_id", parseInt(value))}
           defaultValue=""
         >
           <SelectTrigger id="category">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Electronics">Electronics</SelectItem>
+            {categories.map((e) => (
+              <SelectItem key={e.value} value={`${e.value}`}>
+                {e.label}
+              </SelectItem>
+            ))}
+            {/* <SelectItem value="Electronics">Electronics</SelectItem>
             <SelectItem value="Clothing">Clothing</SelectItem>
             <SelectItem value="Groceries">Groceries</SelectItem>
             <SelectItem value="Books">Books</SelectItem>
-            <SelectItem value="Furniture">Furniture</SelectItem>
+            <SelectItem value="Furniture">Furniture</SelectItem> */}
           </SelectContent>
         </Select>
         {errors.category && (

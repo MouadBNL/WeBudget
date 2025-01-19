@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Bot, Send, RefreshCw, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { QuickSuggestions } from "@/components/partials/quick-suggestions"
 
 interface Message {
   text: string
@@ -226,6 +227,15 @@ export default function Chat() {
             </p>
           </div>
         </div>
+      </div>
+      <div className="border-b p-4 bg-card">
+        <QuickSuggestions 
+          onSelect={(query) => {
+            setInputMessage(query)
+            // Optional: automatically send the message
+            // handleSend()
+          }} 
+        />
       </div>
     </div>
   )

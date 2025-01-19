@@ -11,17 +11,18 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Transaction } from "@/types";
 
-type Transaction = {
-  id: number;
-  invoice: string;
-  date: string;
-  transaction: string;
-  category: string;
-  amount: number;
+export type TransactionFormProps = {
+  transaction: Partial<Transaction>;
+  onChange?: (transaction: Partial<Transaction>) => void;
+  onSubmit?: (transaction: Partial<Transaction>) => void;
 };
-
-const TransactionForm = () => {
+const TransactionForm = ({
+  transaction,
+  onChange,
+  onSubmit,
+}: TransactionFormProps) => {
   const {
     register,
     handleSubmit,
@@ -39,14 +40,23 @@ const TransactionForm = () => {
     },
   });
 
-  const onSubmit = (data: Transaction) => {
+  watch((t) => {
+    if (onChange) {
+      onChange(t);
+    }
+  });
+
+  const onSubmitClick = (data: Transaction) => {
     console.log("Transaction Submitted:", data);
+    if (onSubmit) {
+      onSubmit(data);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmitClick)} className="space-y-4">
       {/* ID */}
-      <div>
+      {/* <div>
         <Label htmlFor="id">ID</Label>
         <Input
           id="id"
@@ -57,7 +67,7 @@ const TransactionForm = () => {
         {errors.id && (
           <p className="text-red-500 text-sm">{errors.id.message}</p>
         )}
-      </div>
+      </div> */}
 
       {/* Invoice */}
       <div>

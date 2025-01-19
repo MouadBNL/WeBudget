@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react'
-import { Avatar } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, RefreshCw, Loader2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { QuickSuggestions } from "@/components/partials/quick-suggestions"
+import React, { useState, useRef, useEffect } from "react";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Bot, Send, RefreshCw, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { QuickSuggestions } from "@/components/partials/quick-suggestions";
 
 interface Message {
-  text: string
-  isUser: boolean
-  timestamp: Date
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
 }
 
 export default function Chat() {
@@ -22,125 +22,130 @@ export default function Chat() {
     {
       text: "Marhaba! I'm your WeBudget AI assistant, specializing in financial advice for Moroccan SMEs. How can I assist you today?",
       isUser: false,
-      timestamp: new Date()
-    }
-  ])
-  const [inputMessage, setInputMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  
+      timestamp: new Date(),
+    },
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   // Refs and hooks
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const { toast } = useToast()
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
         top: scrollRef.current.scrollHeight,
-        behavior: 'smooth'
-      })
+        behavior: "smooth",
+      });
     }
-  }, [messages])
+  }, [messages]);
 
   // Handle new chat creation
   const handleNewChat = () => {
-    setMessages([{
-      text: "Marhaba! I'm your WeBudget AI assistant, specializing in financial advice for Moroccan SMEs. How can I assist you today?",
-      isUser: false,
-      timestamp: new Date()
-    }])
-  }
+    setMessages([
+      {
+        text: "Marhaba! I'm your WeBudget AI assistant, specializing in financial advice for Moroccan SMEs. How can I assist you today?",
+        isUser: false,
+        timestamp: new Date(),
+      },
+    ]);
+  };
 
   // Handle message sending
   const handleSend = async () => {
-    if (!inputMessage.trim() || isLoading) return
+    if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = {
       text: inputMessage.trim(),
       isUser: true,
-      timestamp: new Date()
-    }
+      timestamp: new Date(),
+    };
 
-    setMessages(prev => [...prev, userMessage])
-    setInputMessage('')
-    setIsLoading(true)
+    setMessages((prev) => [...prev, userMessage]);
+    setInputMessage("");
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: messages.concat(userMessage).map(msg => ({
-            role: msg.isUser ? 'user' : 'assistant',
-            content: msg.text
-          }))
-        })
-      })
+          messages: messages.concat(userMessage).map((msg) => ({
+            role: msg.isUser ? "user" : "assistant",
+            content: msg.text,
+          })),
+        }),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to get response')
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to get response");
       }
 
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-      let aiResponseText = ''
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let aiResponseText = "";
 
       if (!reader) {
-        throw new Error('No response stream available')
+        throw new Error("No response stream available");
       }
 
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+        const { done, value } = await reader.read();
+        if (done) break;
 
-        const chunk = decoder.decode(value)
-        aiResponseText += chunk
+        const chunk = decoder.decode(value);
+        aiResponseText += chunk;
 
-        setMessages(prev => {
-          const newMessages = [...prev]
-          const lastMessage = newMessages[newMessages.length - 1]
-          
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          const lastMessage = newMessages[newMessages.length - 1];
+
           if (!lastMessage.isUser) {
-            lastMessage.text = aiResponseText
+            lastMessage.text = aiResponseText;
           } else {
             newMessages.push({
               text: aiResponseText,
               isUser: false,
-              timestamp: new Date()
-            })
+              timestamp: new Date(),
+            });
           }
-          
-          return newMessages
-        })
+
+          return newMessages;
+        });
       }
-    } catch (error:any) {
-      console.error('Chat error:', error)
+    } catch (error: any) {
+      console.error("Chat error:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to get response. Please try again.",
-        variant: "destructive"
-      })
-      
+        description:
+          error.message || "Failed to get response. Please try again.",
+        variant: "destructive",
+      });
+
       // Remove the failed message attempt
-      setMessages(prev => prev.filter(msg => msg.text !== userMessage.text))
+      setMessages((prev) =>
+        prev.filter((msg) => msg.text !== userMessage.text)
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Handle keyboard input
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex flex-1 mt-auto h-full bg-background">
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="border-b p-4 bg-card">
@@ -151,12 +156,14 @@ export default function Chat() {
               </Avatar>
               <div>
                 <h2 className="font-semibold">WeBudget AI Assistant</h2>
-                <p className="text-sm text-muted-foreground">Your financial advisor</p>
+                <p className="text-sm text-muted-foreground">
+                  Your financial advisor
+                </p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleNewChat}
               className="ml-auto"
             >
@@ -172,22 +179,32 @@ export default function Chat() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  message.isUser ? "justify-end" : "justify-start"
+                }`}
               >
-                <div className={`flex items-start space-x-2 max-w-[80%] ${
-                  message.isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'
-                }`}>
+                <div
+                  className={`flex items-start space-x-2 max-w-[80%] ${
+                    message.isUser
+                      ? "flex-row-reverse space-x-reverse"
+                      : "flex-row"
+                  }`}
+                >
                   {!message.isUser && (
                     <Avatar className="mt-0.5">
                       <Bot className="h-5 w-5" />
                     </Avatar>
                   )}
-                  <Card className={`p-3 ${
-                    message.isUser 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted'
-                  }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  <Card
+                    className={`p-3 ${
+                      message.isUser
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">
+                      {message.text}
+                    </p>
                     <span className="text-xs opacity-70 mt-1 block">
                       {message.timestamp.toLocaleTimeString()}
                     </span>
@@ -215,10 +232,7 @@ export default function Chat() {
                 className="flex-1"
                 disabled={isLoading}
               />
-              <Button 
-                onClick={handleSend} 
-                disabled={isLoading}
-              >
+              <Button onClick={handleSend} disabled={isLoading}>
                 <Send className="h-4 w-4" />
               </Button>
             </div>
@@ -229,14 +243,14 @@ export default function Chat() {
         </div>
       </div>
       <div className="border-b p-4 bg-card">
-        <QuickSuggestions 
+        <QuickSuggestions
           onSelect={(query) => {
-            setInputMessage(query)
+            setInputMessage(query);
             // Optional: automatically send the message
             // handleSend()
-          }} 
+          }}
         />
       </div>
     </div>
-  )
+  );
 }

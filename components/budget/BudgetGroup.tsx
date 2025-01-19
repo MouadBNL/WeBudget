@@ -9,12 +9,24 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import BudgetCategoryForm from "../partials/budget-category-form";
+import { BudgetCategoryCreateController } from "@/controllers/BudgetCategoryCreateController";
+import { useState } from "react";
 
 export type BudgetGroupProps = {
   group: BudgetGroup;
+  onRefresh?: () => void;
 };
-export default function BudgetGroupUI({ group }: BudgetGroupProps) {
-  function formatCurrency(amount: number) {
+export default function BudgetGroupUI({ group, onRefresh }: BudgetGroupProps) {
+  const [open, setOpen] = useState(false);
+
+  function formatCurrency(amount: number = 0) {
     return `${amount} DH`;
   }
 
@@ -26,7 +38,21 @@ export default function BudgetGroupUI({ group }: BudgetGroupProps) {
         </div>
 
         <div>
-          <Button>Add Category</Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>Add Category</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>New Category</DialogTitle>
+              <BudgetCategoryCreateController
+                groupId={group.id as number}
+                onRefresh={() => {
+                  setOpen(false);
+                  if (onRefresh) onRefresh();
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -43,7 +69,7 @@ export default function BudgetGroupUI({ group }: BudgetGroupProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {group.items.map((item) => (
+            {group.budget_category.map((item) => (
               <TableRow key={item.category}>
                 <TableCell className="font-medium">{item.category}</TableCell>
                 <TableCell className="text-right">

@@ -8,15 +8,15 @@ export type Transaction = {
 };
 
 export type Budget = {
-  id: number | null;
-  category: string;
-  budget: number;
-  actual: number;
-  remaining: number;
+  id: any;
+  category: any;
+  budget: any;
+  actual?: number;
+  remaining?: number;
 };
 
 export type BudgetGroup = {
   id: number | null;
   name: string;
-  items: Budget[];
+  budget_category: Budget[];
 };

@@ -1,8 +1,13 @@
+import { getBudgetData } from "@/app/actions/budget";
 import Budget from "@/components/budget/Budget";
+import BudgetGroupForm from "@/components/partials/budget-group-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import BudgetGroupCreateController from "@/controllers/BudgetGroupCreateController";
 import { BudgetGroup } from "@/types";
+import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import {
   LineChart,
   Line,
@@ -13,15 +18,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function BudgetDashboard() {
-  // Sample data - In real app, this would come from your API
-  const monthlyData = [
-    { month: "Jan", spent: 4000, budget: 5000 },
-    { month: "Feb", spent: 4500, budget: 5000 },
-    { month: "Mar", spent: 3800, budget: 5000 },
-    { month: "Apr", spent: 4200, budget: 5000 },
-  ];
-
+export default async function BudgetDashboard() {
   const categories = [
     { name: "Operations", spent: 2500, budget: 3000, color: "bg-blue-600" },
     { name: "Marketing", spent: 1500, budget: 2000, color: "bg-green-600" },
@@ -109,9 +106,6 @@ export default function BudgetDashboard() {
       </div>
 
       <hr className="my-8" />
-      <div className="flex justify-end items-end mb-4">
-        <Button>Add Budget Group</Button>
-      </div>
       <Budget />
 
       {/* Budget Categories */}
